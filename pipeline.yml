@@ -1,0 +1,65 @@
+name: CI/CD Pipeline
+
+# Run this workflow on every push to the main branch and on pull requests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+# Define the jobs
+jobs:
+  # Job to test the code
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm test
+
+  # Job to build the application
+  build:
+    runs-on: ubuntu-latest
+    needs: test # This job depends on the test job
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build application
+      run: npm run build
+
+  # Job to deploy the application
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build # This job depends on the build job
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Deploy to server
+      run: |
+        echo "Deploying application..."
+        # Add deployment scripts here
+        # Example: scp or rsync to copy files to the server
+        # Example: ssh to remotely execute deployment commands
